@@ -1,6 +1,8 @@
 var _ = require('lodash');
 var async = require('async-chainable');
 var traverse = require('traverse');
+var EventEmitter = require('events');
+var emitter = new EventEmitter();
 
 // Constants {{{
 var FK_OBJECTID = 1; // 1:1 objectID mapping
@@ -288,6 +290,11 @@ function createRow(collection, id, row, callback) {
 		for(var i = 0; i < refsMeta.length; i++) {
 			if (traverse(newItemAsObject).has(refsMeta[i].path)) {
 				settings.refs[refsMeta[i].ref] = traverse(newItemAsObject).get(refsMeta[i].path).toString();
+        emitter.emit('ref', {
+          ref: refsMeta[i].ref,
+          path: refsMeta[i].path,
+          value: settings.refs[refsMeta[i].ref]
+        });
 			}
 		}
 
@@ -396,4 +403,5 @@ module.exports = {
 	import: scenarioImport,
 	export: scenarioExport,
 	set: scenarioSet,
+  emitter: emitter
 };
