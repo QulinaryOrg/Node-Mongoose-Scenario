@@ -110,14 +110,18 @@ var scenarioImport = function(model, options, finish) {
 						createRow(collection, id, rowFlattened, next);
 					});
 
-					next();
+					setImmediate(next);
 				}) // }}}
-				.end(next);
+				.end(function() {
+					setImmediate(next);
+				});
 		}) // }}}
 		.then(function(next) { // Run all tasks {{{
 			asyncCreator
 				.await()
-				.end(next);
+				.end(function() {
+					setImmediate(next);
+				});
 		}) // }}}
 		.end(function(err) {
 			if (err) return finish(err);
